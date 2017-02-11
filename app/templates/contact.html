@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+{% block js %}
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <h2>CONTACT FORM</h2>
+    <hr>
+    <h3> Please fill in this form to contact the website owner. </h3>
+    <form action="{{ url_for('contact') }}" method="post">
+      {{ form.hidden_tag() }}
+            {{ form.name.label }} <br /> Please enter your full name <br /> {{ form.name(size="55") }}<br /> <br />
+            {{ form.email.label }} <br /> <span style="color:red"> * </span> <br />  Please enter your e-mail address <br /> {{ form.email(size="55") }}<br /> <br />
+            {{ form.subject.label }} <br /> <span style="color:red"> * </span> <br />  {{ form.subject(size="55") }}<br /> <br />
+            {{ form.message.label }} <br /> <span style="color:red"> * </span> <br /> Please enter the message you want to send. <br /> {{ form.message(cols="120", rows="5") }}<br /> <br />  
+        <input type="submit" />
+    </form>
+</div>
+
+{% endblock %}

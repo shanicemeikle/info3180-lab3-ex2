@@ -7,7 +7,15 @@ This file creates your application.
 
 from app import app
 from flask import render_template, request, redirect, url_for
+'from flask_wtf import FlaskForm
+import smtplib
+from wtforms import StringField
+from wtforms.validators import InputRequired
 
+
+from .form import ContactForm
+
+import smtplib
 
 ###
 # Routing for your application.
@@ -17,12 +25,52 @@ from flask import render_template, request, redirect, url_for
 def home():
     """Render website's home page."""
     return render_template('home.html')
-
+    
+@app.route('/contact', methods=["GET", "POST"])
+def contact():
+    """Render the website's about page."""
+    form = ContactForm()
+    
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        subject = form.subject.data
+        msg = form.message.data
+        
+        sendemail(fromname=name,fromemail=email,fromsubject=subject,msg=msg)
+        
+    return render_template('contact.html', form=form)
+    
+def sendemail(fromname,fromemail,fromsubject,msg):
+    toname = 'Leon Facey' 
+    toaddr  = 'leon_facey@yahoo.com'
+    message = """From: {} <{}>\nTo: {} <{}>\nSubject: {}\n\n{}"""
+    
+    messagetosend = message.format(
+                                 fromname,
+                                 fromemail,
+                                 toname,
+                                 toaddr,
+                                 fromsubject,
+                                 msg)
+    
+    # Credentials (if needed)
+    username = ''
+    password = ''
+    
+    # The actual mail send
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.starttls()
+    server.login(username,password)
+    server.sendmail(fromemail, toaddr, messagetosend)
+    server.quit()
+    return
+        
 
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="John Brown")
 
 
 ###
@@ -34,6 +82,7 @@ def send_text_file(file_name):
     """Send your static text file."""
     file_dot_text = file_name + '.txt'
     return app.send_static_file(file_dot_text)
+    
 
 
 @app.after_request
